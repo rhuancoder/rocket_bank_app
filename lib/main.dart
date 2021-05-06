@@ -16,6 +16,10 @@ class RocketBankApp extends StatelessWidget {
 }
 
 class TransferForm extends StatelessWidget {
+  final TextEditingController _fieldControllerAccountNumber =
+      TextEditingController();
+  final TextEditingController _fieldControllerValue = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -28,6 +32,7 @@ class TransferForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              controller: _fieldControllerAccountNumber,
               style: TextStyle(
                 fontSize: 24.0,
               ),
@@ -41,12 +46,13 @@ class TransferForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              controller: _fieldControllerValue,
               style: TextStyle(
                 fontSize: 24.0,
               ),
               decoration: InputDecoration(
                 icon: Icon(Icons.monetization_on),
-                labelText: 'Account number',
+                labelText: 'Value',
                 hintText: '0.00',
               ),
               keyboardType: TextInputType.number,
@@ -62,6 +68,22 @@ class TransferForm extends StatelessWidget {
                   Text('Confirm'),
                 ],
               ),
+              onPressed: () {
+                debugPrint('click');
+                final int accountNumber =
+                    int.tryParse(_fieldControllerAccountNumber.text);
+                final double value =
+                    double.tryParse(_fieldControllerValue.text);
+                if (accountNumber != null && double != null) {
+                  final transfer = Transfer(value, accountNumber);
+                  debugPrint('$transfer');
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$transfer'),
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ],
@@ -113,4 +135,9 @@ class Transfer {
   final int accountNumber;
 
   Transfer(this.value, this.accountNumber);
+
+  @override
+  String toString() {
+    return 'Transfer{value: $value, accountNumber: $accountNumber}';
+  }
 }
