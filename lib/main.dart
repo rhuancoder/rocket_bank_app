@@ -9,7 +9,7 @@ class RocketBankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: TransferForm(),
+        body: TransfersList(),
       ),
     );
   }
@@ -50,7 +50,7 @@ class TransferForm extends StatelessWidget {
                   Text('Confirm'),
                 ],
               ),
-              onPressed: () => _createTransfer(),
+              onPressed: () => _createTransfer(context),
             ),
           ),
         ],
@@ -58,12 +58,14 @@ class TransferForm extends StatelessWidget {
     );
   }
 
-  void _createTransfer() {
+  void _createTransfer(BuildContext context) {
     final int accountNumber = int.tryParse(_fieldControllerAccountNumber.text);
     final double value = double.tryParse(_fieldControllerValue.text);
     if (accountNumber != null && double != null) {
       final transfer = Transfer(value, accountNumber);
+      debugPrint('creating');
       debugPrint('$transfer');
+      Navigator.pop(context, transfer);
     }
   }
 }
@@ -112,6 +114,17 @@ class TransfersList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
+        onPressed: () {
+          final Future<Transfer> future = Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TransferForm(),
+              ));
+          future.then((receivedTransfer) {
+            debugPrint('received');
+            debugPrint('$receivedTransfer');
+          });
+        },
       ),
     );
   }
