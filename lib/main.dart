@@ -15,9 +15,17 @@ class RocketBankApp extends StatelessWidget {
   }
 }
 
-class TransferForm extends StatelessWidget {
+class TransferForm extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return TransferFormState();
+  }
+}
+
+class TransferFormState extends State<TransferForm> {
   final TextEditingController _fieldControllerAccountNumber =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _fieldControllerValue = TextEditingController();
 
   @override
@@ -27,33 +35,35 @@ class TransferForm extends StatelessWidget {
       appBar: AppBar(
         title: Text('Create Transfer'),
       ),
-      body: Column(
-        children: [
-          Editor(
-            controller: _fieldControllerAccountNumber,
-            label: 'Account Number',
-            hint: '0000',
-          ),
-          Editor(
-            controller: _fieldControllerValue,
-            label: 'Value',
-            hint: '0.00',
-            icon: Icons.monetization_on,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(128.0, 8.0, 128.0, 8.0),
-            child: ElevatedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add),
-                  Text('Confirm'),
-                ],
-              ),
-              onPressed: () => _createTransfer(context),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Editor(
+              controller: _fieldControllerAccountNumber,
+              label: 'Account Number',
+              hint: '0000',
             ),
-          ),
-        ],
+            Editor(
+              controller: _fieldControllerValue,
+              label: 'Value',
+              hint: '0.00',
+              icon: Icons.monetization_on,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(128.0, 8.0, 128.0, 8.0),
+              child: ElevatedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add),
+                    Text('Confirm'),
+                  ],
+                ),
+                onPressed: () => _createTransfer(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -98,19 +108,29 @@ class Editor extends StatelessWidget {
   }
 }
 
-class TransfersList extends StatelessWidget {
+class TransfersList extends StatefulWidget {
+  final List<Transfer> _transfers = [];
+
+  @override
+  State<StatefulWidget> createState() {
+    return TransfersListState();
+  }
+}
+
+class TransfersListState extends State<TransfersList> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Transfers'),
       ),
-      body: Column(
-        children: [
-          TransferItem(Transfer(100.00, 1000)),
-          TransferItem(Transfer(200.00, 1001)),
-          TransferItem(Transfer(300.00, 1003)),
-        ],
+      body: ListView.builder(
+        itemCount: widget._transfers.length,
+        itemBuilder: (context, index) {
+          final transfer = widget._transfers[index];
+          return TransferItem(transfer);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -123,6 +143,11 @@ class TransfersList extends StatelessWidget {
           future.then((receivedTransfer) {
             debugPrint('received');
             debugPrint('$receivedTransfer');
+            if(receivedTransfer != null) {
+              setState(() {
+                widget._transfers.add(receivedTransfer);
+              });
+            }
           });
         },
       ),
