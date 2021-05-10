@@ -8,15 +8,21 @@ class RocketBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: TransfersList(),
-      ),
+      theme: ThemeData(
+          primaryColor: Colors.cyan[900],
+          accentColor: Colors.cyanAccent[700],
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              onPrimary: Colors.black,
+              primary: Colors.cyanAccent[700],
+            ),
+          )),
+      home: TransfersList(),
     );
   }
 }
 
 class TransferForm extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return TransferFormState();
@@ -25,7 +31,7 @@ class TransferForm extends StatefulWidget {
 
 class TransferFormState extends State<TransferForm> {
   final TextEditingController _fieldControllerAccountNumber =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _fieldControllerValue = TextEditingController();
 
   @override
@@ -118,7 +124,6 @@ class TransfersList extends StatefulWidget {
 }
 
 class TransfersListState extends State<TransfersList> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +148,7 @@ class TransfersListState extends State<TransfersList> {
           future.then((receivedTransfer) {
             debugPrint('received');
             debugPrint('$receivedTransfer');
-            if(receivedTransfer != null) {
+            if (receivedTransfer != null) {
               setState(() {
                 widget._transfers.add(receivedTransfer);
               });
